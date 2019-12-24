@@ -1,1 +1,1 @@
-create table department(id name,name varchar(30))
+create table department(id number,name varchar(30))
