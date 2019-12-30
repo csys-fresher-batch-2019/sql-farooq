@@ -29,7 +29,7 @@ constraint status_ck check (status in('available','not available','delayed','can
 );
 
 
-###feature 2: Book tickets
+##feature 2: Book tickets
 
 QUERY: 
 
