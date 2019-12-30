@@ -1,11 +1,11 @@
 # RAIL TICKET BOOKING
 
-##summary:
+## summary:
 To know the availability status of the train and book tickets accordingly. 
 
-##features:
+## features:
 
-###feature 1: list all trains
+### feature 1: list all trains
 
 
 QUERY:SQL
