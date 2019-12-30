@@ -35,7 +35,7 @@ insert into task1 values(task_id_seq.nextval,1,'install oracle');
 insert into task1 values(task_id_seq.nextval,2,'install jdk');
 insert into task1 values(task_id_seq.nextval,1,'install sql');
 
------cross join----
+-----cross join---
 select * from users,task1;
 
 ------inner join-----
