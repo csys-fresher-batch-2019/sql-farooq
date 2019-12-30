@@ -28,6 +28,8 @@ constraint time_ck check (arr_time <> dest_time),
 constraint status_ck check (status in('available','not available','delayed','cancelled'))
 );
 
+select * from viewtrain;
+
 ```
 ### feature 2: Book tickets
 
