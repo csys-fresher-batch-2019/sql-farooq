@@ -8,9 +8,9 @@ To know the availability status of the train and book tickets accordingly.
 ### feature 1: list all trains
 
 
-QUERY:SQL
+QUERY:
 
-~sql
+~~~ sql
 create table viewtrain
 (
 train_num number not null,
@@ -32,7 +32,7 @@ constraint status_ck check (status in('available','not available','delayed','can
 ###feature 2: Book tickets
 
 QUERY: 
-~SQL
+
 
 create table booktickets
 (
