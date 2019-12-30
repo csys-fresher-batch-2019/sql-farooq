@@ -10,7 +10,7 @@ To know the availability status of the train and book tickets accordingly.
 
 QUERY:
 
-~~~ sql
+``` sql
 create table viewtrain
 (
 train_num number not null,
@@ -28,12 +28,12 @@ constraint time_ck check (arr_time <> dest_time),
 constraint status_ck check (status in('available','not available','delayed','cancelled'))
 );
 
-
+```
 ##feature 2: Book tickets
 
 QUERY: 
 
-
+``` sql
 
 create table booktickets
 (
@@ -56,3 +56,4 @@ constraint travel_date_ck check (travel_date >= sysdate)
 );
 create sequence pnr_num_seq start with 123456789 increment by 2;
 
+```
