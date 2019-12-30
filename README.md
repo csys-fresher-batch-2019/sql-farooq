@@ -18,14 +18,15 @@ train_name varchar2(20),
 boarding_station varchar2(20) not null,
 destination_station varchar2(20) not null,
 arr_time number not null,
-dest_time number not null,
+dept_time number not null,
 route varchar2(20) not null,
 status varchar2(10) not null,
 seat_avail number not null,
 constraint train_num_pk primary key (train_num),
 constraint station_ck check (boarding_station <> destination_station),
 constraint time_ck check (arr_time <> dest_time),
-constraint status_ck check (status in('available','not available','delayed','cancelled'))
+constraint status_ck check (status in('available','not available','delayed','cancelled')),
+constraint same_uq unique(train_name,boarding_station,destination_station)
 );
 
 select * from viewtrain;
