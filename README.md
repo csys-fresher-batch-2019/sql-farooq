@@ -34,6 +34,7 @@ constraint status_ck check (status in('available','not available','delayed','can
 QUERY: 
 
 
+
 create table booktickets
 (
 pass_name varchar2(20) not null,
@@ -41,12 +42,17 @@ train_num number not null,
 pass_id varchar2(20) not null,
 travel_date date not null,
 boarding_station varchar2(10) not null,
-phone_num number not null,
+phone_number number not null,
 berth varchar2(10),
 insurance_need varchar2(5) not null,
 pnr_num number not null,
 status1 varchar2(15) not null,
-constraint 
+constraint pass_id_pk primary key (pass_id),
+constraint train_num_fk foreign key (train_num) references viewtrain(train_num),
+constraint phone_number_ck check (phone_number =10),
+constraint berth_ck check (berth in ('lower','middle','upper','sideupper','sidelower')),
+constraint insurance_need_ck check (insurance_need in ('1','0')),
+constraint travel_date_ck check (travel_date >= sysdate)
 );
 create sequence pnr_num_seq start with 123456789 increment by 2;
 
