@@ -13,7 +13,7 @@ QUERY:
 ``` sql
 create table viewtrain
 (
-train_num number not null,
+train_num number ,
 train_name varchar2(20),
 boarding_station varchar2(20) not null,
 destination_station varchar2(20) not null,
@@ -41,7 +41,7 @@ create table booktickets
 (
 pass_name varchar2(20) not null,
 train_num number not null,
-pass_id varchar2(20) not null,
+pass_id varchar2(20),
 travel_date date not null,
 boarding_station varchar2(10) not null,
 phone_number number not null,
