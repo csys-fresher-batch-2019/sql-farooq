@@ -54,8 +54,11 @@ select * from order1;
 select * from book;
 select * from book_stock;
 
-
+-------------------------------------------------------------
 drop function findstock;
+-------------------------------------------------------------
+ -------------FUNCTION CREATION---------------
+                            
  create or replace function findstock(i_book_id IN number) 
  return number AS 
  v_remaining_stock number;
@@ -74,9 +77,51 @@ return v_remaining_stock;
 
 end findstock;
 
-
+----------------RUN FUNCTIONS-------------
 select findstock(101) from dual;
 
 select b.*, findstock(book_id) from book b;
+------------------------------------------------
+                            
+                            
+  -------------PROCEDURE CREATION-----------
+                            
+drop procedure order_book;
+---------------------------------------------
+create or replace procedure order_book
+(
+i_book_id IN NUMBER,
+i_qty IN NUMBER,
+i_username IN VARCHAR2,
+i_order_id IN NUMBER,
+I_ERROR_MESSAGE OUT VARCHAR2)
+AS
+v_book_stock number;
+begin
+v_book_stock := findstock(i_book_id);
+if v_book_stock >= i_qty then 
+insert into order1(order_id,username,book_id,quantity,status) values(i_order_id,i_username,i_book_id,i_qty,'ordered');
+end if; 
+commit;
+end order_book;
+
+------------------EXECUTE PROCEDURE-----------
+                            
+                            
+DECLARE i_book_id NUMBER := 101; 
+i_qty NUMBER := 555; 
+i_username VARCHAR2(20) := 'khader';
+i_order_id NUMBER :=6;
+i_error_message varchar2(100) ;
+BEGIN
+order_book (i_book_id,i_qty,i_username,i_order_id,i_ERROR_MESSAGE);
+IF i_error_message IS NOT NULL THEN
+DBMS( 'Error - ' || i_error_message ); 
+END IF;
+END;
+-----------------------------------------------
+
+select * from order1;
+
 
 
