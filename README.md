@@ -38,25 +38,31 @@ QUERY:
 
 ``` sql
 
-create table booktickets
+create table booking
 (
-pass_name varchar2(20) not null,
-train_num number not null,
-pass_id varchar2(20),
-travel_date date not null,
-boarding_station varchar2(10) not null,
-phone_number number not null,
-berth varchar2(10),
-insurance_need varchar2(5) not null,
 pnr_num number not null,
-status1 varchar2(15) not null,
-constraint pass_id_pk primary key (pass_id),
-constraint train_num_fk foreign key (train_num) references viewtrain(train_num),
-constraint phone_number_ck check (phone_number =10),
-constraint berth_ck check (berth in ('lower','middle','upper','sideupper','sidelower')),
-constraint insurance_need_ck check (insurance_need in ('1','0')),
-constraint travel_date_ck check (travel_date >= sysdate)
+train_num number,
+train_name varchar2(20),
+boarding_station varchar2(20) not null,
+destination_station varchar2(20) not null,
+no_of_seats number not null,
+curr_status varchar2(20) not null,
+constraint pnr_num_pk primary key (pnr_num),
+constraint station1_ck check (boarding_station <> destination_station),
+constraint no_of_seats_ck check (no_of_seats >=0),
+constraint curr_status_ck check (curr_status in('booked','waiting_list'))
 );
+
 create sequence pnr_num_seq start with 123456789 increment by 2;
 
+insert into booking (pnr_num,train_num,train_name,boarding_station,destination_station,no_of_seats,curr_status)
+values(pnr_num_seq.nextval,'32636','vaigai express','chennai','madurai',2,'booked');
+
+insert into booking (pnr_num,train_num,train_name,boarding_station,destination_station,no_of_seats,curr_status)
+values(pnr_num_seq.nextval,'32636','vaigai express','chennai','madurai',2,'booked');
+
+insert into booking (pnr_num,train_num,train_name,boarding_station,destination_station,no_of_seats,curr_status)
+values(pnr_num_seq.nextval,'32637','pandian express','chennai','madurai',5,'booked');
+
+select * from booking;
 ```
