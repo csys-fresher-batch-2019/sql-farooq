@@ -48,7 +48,11 @@ TO_TIMESTAMP_TZ('2020-01-0212:00:00-08:00','YYYY-MM-DDHH:MI:SSTZH:TZM'),'trichy-
 
 ```
 ### feature 2: Book tickets
-
+## table 2:
+| train_num | train_name      | boarding_station | destination_station | no_of_seats                  | curr_status                  |
+|-----------|-----------------|------------------|---------------------|------------------------------|------------------------------|
+| 32636     | vaigai express  | chennai          | madurai             | 01-JAN-20 02.00.00.000000 AM | 02-JAN-20 12.00.00.000000 PM |
+| 32637     | pandian express | madurai          | chennai             | 01-JAN-20 02.00.00.000000 AM | 02-JAN-20 12.00.00.000000 PM |
 QUERY: 
 
 ``` sql
