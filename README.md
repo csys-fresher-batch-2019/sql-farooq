@@ -17,19 +17,29 @@ train_num number ,
 train_name varchar2(20),
 boarding_station varchar2(20) not null,
 destination_station varchar2(20) not null,
-arr_time number not null,
-dept_time number not null,
-route varchar2(20) not null,
-status varchar2(10) not null,
-seat_avail number not null,
+arr_time timestamp not null,
+dept_time timestamp not null,
+route varchar2(30) not null,
+status varchar2(20) not null,
 constraint train_num_pk primary key (train_num),
 constraint station_ck check (boarding_station <> destination_station),
-constraint time_ck check (arr_time <> dest_time),
-constraint status_ck check (status in('available','not available','delayed','cancelled')),
+constraint time_ck check (arr_time <> dept_time),
+constraint status_ck check (status in('available running','available yet to start','not available','cancelled')),
 constraint same_uq unique(train_name,boarding_station,destination_station)
+
 );
 
-select * from viewtrain;
+insert into viewtrain(train_num,train_name,boarding_station,destination_station,arr_time,dept_time,route,status)
+values(32636,'vaigai express','chennai','madurai',TO_TIMESTAMP_TZ('2020-01-0102:00:00-08:00','YYYY-MM-DDHH:MI:SSTZH:TZM'),
+TO_TIMESTAMP_TZ('2020-01-0212:00:00-08:00','YYYY-MM-DDHH:MI:SSTZH:TZM'),'chennai-trichy-madurai','available running');
+
+insert into viewtrain(train_num,train_name,boarding_station,destination_station,arr_time,dept_time,route,status)
+values(32637,'pandian express','madurai','chennai',TO_TIMESTAMP_TZ('2020-01-0102:00:00-08:00','YYYY-MM-DDHH:MI:SSTZH:TZM'),
+TO_TIMESTAMP_TZ('2020-01-0212:00:00-08:00','YYYY-MM-DDHH:MI:SSTZH:TZM'),'madurai-trichy-chennai','available running');
+
+insert into viewtrain(train_num,train_name,boarding_station,destination_station,arr_time,dept_time,route,status)
+values(32638,'intercity express','trichy','tirunelveli',TO_TIMESTAMP_TZ('2020-01-0102:00:00-08:00','YYYY-MM-DDHH:MI:SSTZH:TZM'),
+TO_TIMESTAMP_TZ('2020-01-0212:00:00-08:00','YYYY-MM-DDHH:MI:SSTZH:TZM'),'trichy-madurai-tirunelveli','available running');
 
 ```
 ### feature 2: Book tickets
