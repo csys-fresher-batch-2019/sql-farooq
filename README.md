@@ -90,6 +90,8 @@ select * from registration;
 ### feature 3: Book tickets
 ## table 1:
 
+
+
 | train_num | train_name      | boarding_station | destination_station | no_of_seats                  | curr_status                  |
 |-----------|-----------------|------------------|---------------------|------------------------------|------------------------------|
 | 32636     | vaigai express  | chennai          | madurai             | 2                            | confirmed                    |
@@ -136,6 +138,7 @@ select * from booking;
 | 32637     | 100         |
 
 query:
+```sql
 
 create table seats
 (
@@ -151,8 +154,11 @@ insert into seats(train_num,avail_seats)values(32638,100);
 
 select * from seats;
 
+```
+
 ### function: count number of seats.
 
+```sql
 
 create or replace function findavail(i_train_num IN number,i_pnr_num IN number) 
  return number AS 
@@ -172,8 +178,11 @@ return v_remaining_seats;
 
 end findavail;
 
-### procedure : 
+```
 
+### procedure : check either confirmed or waitinglist
+
+```sql
 
 create or replace PROCEDURE PR_booking_status
 (
@@ -200,3 +209,4 @@ v_pnr_num number := 123456835 ;
 BEGIN
 PR_booking_status(v_train_num,v_curr_status,v_pnr_num);
 END;
+```
