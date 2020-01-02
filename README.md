@@ -47,8 +47,49 @@ values(32638,'intercity express','trichy','tirunelveli',TO_TIMESTAMP_TZ('2020-01
 TO_TIMESTAMP_TZ('2020-01-0212:00:00-08:00','YYYY-MM-DDHH:MI:SSTZH:TZM'),'trichy-madurai-tirunelveli','available running');
 
 ```
-### feature 2: Book tickets
-## table 2:
+
+
+### feature 2: Registration
+
+## table 1:
+
+| user_id | user_name | password | email_id          | phone_num  | gender | dob        | country_name |
+|---------|-----------|----------|-------------------|------------|--------|------------|--------------|
+| 1       | farooq    | p1234    | farooq@gmail.com  | 8778621280 | M      | 05.01.1999 | India        |
+| 2       | mohamed   | p4321    | mohamed2gmail.com | 8765432134 | M      | 08.02.99   | India        |
+
+
+query:
+
+create table registration 
+( 
+user_id number not null, 
+user_name varchar2(20) not null, 
+pass varchar2(20) not null, 
+email_id varchar2(20) not null, 
+phone_num char(10) not null, 
+gender varchar2(2) not null, 
+dob varchar2(10), 
+country_name varchar2(25) not null, 
+constraint user_id_pk primary key (user_id), 
+constraint same_uq unique(user_name,user_id,phone_num), 
+constraint gender_ck check (gender in ('M','F')),
+constraint phone_num_ck check (phone_num not like '%[^0-9]%') 
+);
+
+
+insert into registration (user_id,user_name,pass,email_id,phone_num,gender,dob,country_name)
+values(1,'farooq','p1234','farooq@gmail.com',8778621280,'M',to_date('05.01.1999','dd.MM.yyyy'),'India');
+insert into registration (user_id,user_name,pass,email_id,phone_num,gender,dob,country_name)
+values(2,'mohamed','p1234','mohamed@gmail.com',8778621281,'M',to_date('05.01.1999','dd.MM.yyyy'),'India');
+insert into registration (user_id,user_name,pass,email_id,phone_num,gender,dob,country_name)
+values(3,'ameer','p4321','ameer@gmail.com',8778621282,'M',to_date('05.01.1989','dd.MM.yyyy'),'China');
+select * from registration;
+
+
+### feature 3: Book tickets
+## table 1:
+
 | train_num | train_name      | boarding_station | destination_station | no_of_seats                  | curr_status                  |
 |-----------|-----------------|------------------|---------------------|------------------------------|------------------------------|
 | 32636     | vaigai express  | chennai          | madurai             | 2                            | confirmed                    |
@@ -86,3 +127,76 @@ values(pnr_num_seq.nextval,'32637','pandian express','chennai','madurai',5,'book
 
 select * from booking;
 ```
+## table 2:
+
+
+| train_num | avail_seats |
+|-----------|-------------|
+| 32636     | 100         |
+| 32637     | 100         |
+
+query:
+
+create table seats
+(
+train_num number not null,
+avail_seats number not null,
+constraint train_num_uq unique (train_num),
+constraint train_num_pf foreign key (train_num) references viewtrain(train_num)
+);
+
+insert into seats(train_num,avail_seats)values(32636,100);
+insert into seats(train_num,avail_seats)values(32637,100);
+insert into seats(train_num,avail_seats)values(32638,100);
+
+select * from seats;
+
+### function: count number of seats.
+
+
+create or replace function findavail(i_train_num IN number,i_pnr_num IN number) 
+ return number AS 
+ v_remaining_seats number;
+ v_booked_seats number;
+ v_seats number;
+ 
+begin
+ 
+select avail_seats into v_seats from seats where train_num = i_train_num;
+
+select sum(no_of_seats) into v_booked_seats from booking where train_num = i_train_num and pnr_num = i_pnr_num;
+
+v_remaining_seats := v_seats - v_booked_seats;
+
+return v_remaining_seats;
+
+end findavail;
+
+### procedure : 
+
+
+create or replace PROCEDURE PR_booking_status
+(
+i_train_num  in number ,
+curr_status out varchar2,
+i_pnr_num IN number
+) AS 
+V_booking_Seats number;
+BEGIN
+   V_booking_seats := findavail ( I_train_num,i_pnr_num);
+   IF V_booking_seats <= 0 THEN
+    update booking set curr_status = 'waiting_list' where train_num = i_train_num;    
+   ELSE
+    update booking set curr_status = 'confirmed';    
+  END IF;
+  COMMIT;
+END PR_booking_status;
+
+---------------------------------
+DECLARE
+v_train_num number := 32636;
+v_curr_status varchar2(30);
+v_pnr_num number := 123456835 ;
+BEGIN
+PR_booking_status(v_train_num,v_curr_status,v_pnr_num);
+END;
