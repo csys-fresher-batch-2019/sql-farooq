@@ -129,7 +129,7 @@ values(pnr_num_seq.nextval,'32637','pandian express','chennai','madurai',5,'book
 
 select * from booking;
 ```
-## table 2:
+## table 2: total number of seats.
 
 
 | train_num | avail_seats |
