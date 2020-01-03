@@ -199,20 +199,24 @@ amount IN number
 ) AS 
 V_booking_Seats number;
 BEGIN
-   V_booking_seats := findavail ( I_train_num,i_pnr_num);
+V_booking_seats := findavail ( I_train_num);
    
-   IF V_booking_seats <= 0 THEN
+   update seats set avail_seats = v_booking_seats-i_no_of_seats where train_num= i_train_num;
    
-   insert into booking (pnr_num,train_num,train_name,boarding_station,destination_station,no_of_seats,curr_status,travel_date,amount)
-   values(pnr_num_seq.nextval,i_train_num,i_train_name,i_boarding_station,i_destination_station,i_no_of_seats,'waiting list',i_travel_date,100);
+   select avail_seats into confirmation from seats where train_num= i_train_num;
+   
+   
+   IF confirmation <= 0 THEN
+   
+   insert into booking (pnr_num,train_num,train_name,boarding_station,destination_station,no_of_seats,curr_status,travel_date)
+   values(pnr_num_seq.nextval,i_train_num,i_train_name,i_boarding_station,i_destination_station,i_no_of_seats,'waiting list',i_travel_date);
    
    ELSE
    
-   insert into booking (pnr_num,train_num,train_name,boarding_station,destination_station,no_of_seats,curr_status,travel_date,amount)
-   values(pnr_num_seq.nextval,i_train_num,i_train_name,i_boarding_station,i_destination_station,i_no_of_seats,'confirmed',i_travel_date,100);
+   insert into booking (pnr_num,train_num,train_name,boarding_station,destination_station,no_of_seats,curr_status,travel_date)
+   values(pnr_num_seq.nextval,i_train_num,i_train_name,i_boarding_station,i_destination_station,i_no_of_seats,'confirmed',i_travel_date);
 
-    ---update seats set avail_seats = v_booking_seats;
-  END IF;
+END IF;
   COMMIT;
 END PR_booking_status;
 
