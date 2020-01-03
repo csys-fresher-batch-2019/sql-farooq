@@ -59,7 +59,7 @@ update viewtrain set train_name = 'pothigai express' where train_num = 32636);
 | user_id | user_name | password | email_id          | phone_num  | gender | dob        | country_name |
 |---------|-----------|----------|-------------------|------------|--------|------------|--------------|
 | 1       | farooq    | p1234    | farooq@gmail.com  | 8778621280 | M      | 05.01.1999 | India        |
-| 2       | mohamed   | p4321    | mohamed2gmail.com | 8765432134 | M      | 08.02.99   | India        |
+| 2       | mohamed   | p4321    | mohamed@gmail.com | 8765432134 | M      | 08.02.99   | India        |
 
 
 query:
