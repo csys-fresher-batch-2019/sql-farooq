@@ -115,19 +115,11 @@ constraint station1_ck check (boarding_station <> destination_station),
 constraint no_of_seats_ck check (no_of_seats >=0),
 constraint curr_status_ck check (curr_status in('booked','waiting_list'))
 );
-
+```
+## sequence:
+```sql
 create sequence pnr_num_seq start with 123456789 increment by 2;
 
-insert into booking (pnr_num,train_num,train_name,boarding_station,destination_station,no_of_seats,curr_status)
-values(pnr_num_seq.nextval,'32636','vaigai express','chennai','madurai',2,'booked');
-
-insert into booking (pnr_num,train_num,train_name,boarding_station,destination_station,no_of_seats,curr_status)
-values(pnr_num_seq.nextval,'32636','vaigai express','chennai','madurai',2,'booked');
-
-insert into booking (pnr_num,train_num,train_name,boarding_station,destination_station,no_of_seats,curr_status)
-values(pnr_num_seq.nextval,'32637','pandian express','chennai','madurai',5,'booked');
-
-select * from booking;
 ```
 ## table 2: total number of seats.
 
