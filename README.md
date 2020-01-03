@@ -60,7 +60,7 @@ TO_TIMESTAMP_TZ('2020-01-0212:00:00-08:00','YYYY-MM-DDHH:MI:SSTZH:TZM'),'trichy-
 
 
 query:
-
+```sql
 create table registration 
 ( 
 user_id number not null, 
@@ -85,7 +85,7 @@ values(2,'mohamed','p1234','mohamed@gmail.com',8778621281,'M',to_date('05.01.199
 insert into registration (user_id,user_name,pass,email_id,phone_num,gender,dob,country_name)
 values(3,'ameer','p4321','ameer@gmail.com',8778621282,'M',to_date('05.01.1989','dd.MM.yyyy'),'China');
 select * from registration;
-
+```
 
 ### feature 3: Book tickets
 ## table 1:
