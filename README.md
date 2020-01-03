@@ -110,12 +110,15 @@ create table booking
 pnr_num number not null,
 train_num number,
 train_name varchar2(20),
+user_id number not null,
 boarding_station varchar2(20) not null,
 destination_station varchar2(20) not null,
 no_of_seats number not null,
 curr_status varchar2(20) not null,
 amount number not null,
+constraint user_id_fk foreign key (user_id) references registration(user_id),
 constraint pnr_num_pk primary key (pnr_num),
+constraint no_of_seats_ck check (no_of_seats <=5),
 constraint station1_ck check (boarding_station <> destination_station),
 constraint no_of_seats_ck check (no_of_seats >=0),
 constraint curr_status_ck check (curr_status in('booked','waiting_list')),
@@ -190,6 +193,7 @@ create or replace PROCEDURE PR_booking_status
 (
 i_train_num  in number ,
 i_pnr_num IN number,
+i_user_id IN number,
 i_train_name IN varchar2,
 i_boarding_station IN varchar2,
 i_destination_station IN varchar2,
@@ -208,13 +212,13 @@ V_booking_seats := findavail ( I_train_num);
    
    IF confirmation <= 0 THEN
    
-   insert into booking (pnr_num,train_num,train_name,boarding_station,destination_station,no_of_seats,curr_status,travel_date)
-   values(pnr_num_seq.nextval,i_train_num,i_train_name,i_boarding_station,i_destination_station,i_no_of_seats,'waiting list',i_travel_date);
+   insert into booking (pnr_num,train_num,train_name,boarding_station,destination_station,no_of_seats,curr_status,travel_date,user_id)
+   values(pnr_num_seq.nextval,i_train_num,i_train_name,i_boarding_station,i_destination_station,i_no_of_seats,'waiting list',i_travel_date,i_user_id);
    
    ELSE
    
-   insert into booking (pnr_num,train_num,train_name,boarding_station,destination_station,no_of_seats,curr_status,travel_date)
-   values(pnr_num_seq.nextval,i_train_num,i_train_name,i_boarding_station,i_destination_station,i_no_of_seats,'confirmed',i_travel_date);
+   insert into booking (pnr_num,train_num,train_name,boarding_station,destination_station,no_of_seats,curr_status,travel_date,user_id)
+   values(pnr_num_seq.nextval,i_train_num,i_train_name,i_boarding_station,i_destination_station,i_no_of_seats,'confirmed',i_travel_date,i_user_id);
 
 END IF;
   COMMIT;
@@ -225,6 +229,7 @@ END PR_booking_status;
 
 DECLARE
 v_train_num number := 32636;
+v_user_id number:= 1;
 v_pnr_num number;
 v_train_name varchar2(20) := 'vaigai express';
 v_boarding_station varchar2(20) := 'chennai';
@@ -234,7 +239,7 @@ v_curr_status varchar2(20);
 v_travel_date date := to_date('12.12.12','dd.MM.yyyy');
 v_amount number;
 BEGIN
-PR_booking_status(v_train_num,v_pnr_num,v_train_name,v_boarding_station,v_destination_station,v_no_of_seats,v_travel_date,amount);
+PR_booking_status(v_train_num,v_pnr_num,v_user_id,v_train_name,v_boarding_station,v_destination_station,v_no_of_seats,v_travel_date,amount);
 END;
 
 ```
