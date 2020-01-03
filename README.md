@@ -48,7 +48,10 @@ TO_TIMESTAMP_TZ('2020-01-0212:00:00-08:00','YYYY-MM-DDHH:MI:SSTZH:TZM'),'trichy-
 
 ```
 
-
+## update new train name
+```sql
+update viewtrain set train_name = 'pothigai express' where train_num = 32636);
+```
 ### feature 2: Registration
 
 ## table 1:
@@ -87,6 +90,7 @@ values(3,'ameer','p4321','ameer@gmail.com',8778621282,'M',to_date('05.01.1989','
 select * from registration;
 ```
 
+
 ### feature 3: Book tickets
 ## table 1:
 
@@ -119,7 +123,11 @@ constraint curr_status_ck check (curr_status in('booked','waiting_list'))
 ## sequence:
 ```sql
 create sequence pnr_num_seq start with 123456789 increment by 2;
+```
 
+## check status of the train 
+```sql
+select curr_status from booking where pnr_number = ?;
 ```
 ## table 2: total number of seats.
 
