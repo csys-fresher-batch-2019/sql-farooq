@@ -184,29 +184,49 @@ end findavail;
 
 ```sql
 
+
 create or replace PROCEDURE PR_booking_status
 (
 i_train_num  in number ,
-curr_status out varchar2,
-i_pnr_num IN number
+i_pnr_num IN number,
+i_train_name IN varchar2,
+i_boarding_station IN varchar2,
+i_destination_station IN varchar2,
+i_no_of_seats IN number,
+i_travel_date date
 ) AS 
 V_booking_Seats number;
 BEGIN
    V_booking_seats := findavail ( I_train_num,i_pnr_num);
+   
    IF V_booking_seats <= 0 THEN
-    update booking set curr_status = 'waiting_list' where train_num = i_train_num;    
+   
+   insert into booking (pnr_num,train_num,train_name,boarding_station,destination_station,no_of_seats,curr_status,travel_date)
+   values(pnr_num_seq.nextval,i_train_num,i_train_name,i_boarding_station,i_destination_station,i_no_of_seats,'waiting list',i_travel_date);
+   
    ELSE
-    update booking set curr_status = 'confirmed';    
+   
+   insert into booking (pnr_num,train_num,train_name,boarding_station,destination_station,no_of_seats,curr_status,travel_date)
+   values(pnr_num_seq.nextval,i_train_num,i_train_name,i_boarding_station,i_destination_station,i_no_of_seats,'confirmed',i_travel_date);
+
+    ---update seats set avail_seats = v_booking_seats;
   END IF;
   COMMIT;
 END PR_booking_status;
 
+
 ---------------------------------
+
 DECLARE
 v_train_num number := 32636;
-v_curr_status varchar2(30);
-v_pnr_num number := 123456835 ;
+v_train_name varchar2(20) := 'vaigai express';
+v_boarding_station varchar2(20) := 'chennai';
+v_destination_station varchar2(20) :='madurai';
+v_no_of_seats number := 55;
+v_curr_status varchar2(20);
+v_travel_date date := to_date('12.12.12','dd.MM.yyyy');
 BEGIN
-PR_booking_status(v_train_num,v_curr_status,v_pnr_num);
+PR_booking_status(v_train_num,v_train_name,v_boarding_station,v_destination_station,v_no_of_seats,v_travel_date);
 END;
+
 ```
