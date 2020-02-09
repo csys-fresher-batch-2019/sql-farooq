@@ -51,10 +51,7 @@ TO_TIMESTAMP('2020-01-0212:00:00','YYYY-MM-DDHH:MI:SS'),'trichy-madurai-tirunelv
 
 ```
 
-## update new train name
-```sql
-update viewtrain set train_name = 'pothigai express' where train_num = 32636);
-```
+
 ### feature 2: Registration
 
 ## table 2:
@@ -104,7 +101,6 @@ values(USER_ID_SEQ.nextval,'ameer','p4321','ameer@gmail.com',8778621282,'M',to_d
 |:---------:|:---------:|:-----------:|:----------------:|:-------------------:|:-----------:|:--------------:|:-----------:|:------------------------------:|:------:|
 | 123456789 |   32636   |  21-04-2020 |      chennai     |       madurai       |      4      |    no Status   |  22.01.2020 | 09-02-20 11:32:24.599000000 AM |   400  |
 | 123456790 |   32637   |  21-04-2020 |      madurai     |       chennai       |      5      |    Confirmed   |  25.01.2020 | 09-02-20 11:37:23.790000000 AM |   750  |
-QUERY: 
 
 ``` sql
 
