@@ -20,31 +20,34 @@ create table viewtrain
 (
 train_num number ,
 train_name varchar2(20),
+traveldate date,
 boarding_station varchar2(20) not null,
 destination_station varchar2(20) not null,
 arr_time timestamp not null,
 dept_time timestamp not null,
 route varchar2(30) not null,
 status varchar2(20) not null,
-constraint train_num_pk primary key (train_num),
+amount number not null,
+constraint train_num1_pk primary key (train_num),
 constraint station_ck check (boarding_station <> destination_station),
 constraint time_ck check (arr_time <> dept_time),
 constraint status_ck check (status in('available running','available yet to start','not available','cancelled')),
-constraint same_uq unique(train_name,boarding_station,destination_station)
-
+constraint same_name_and_srcdest_uq unique(train_name,boarding_station,destination_station)
 );
 
-insert into viewtrain(train_num,train_name,boarding_station,destination_station,arr_time,dept_time,route,status)
-values(32636,'vaigai express','chennai','madurai',TO_TIMESTAMP_TZ('2020-01-0102:00:00-08:00','YYYY-MM-DDHH:MI:SSTZH:TZM'),
-TO_TIMESTAMP_TZ('2020-01-0212:00:00-08:00','YYYY-MM-DDHH:MI:SSTZH:TZM'),'chennai-trichy-madurai','available running');
 
-insert into viewtrain(train_num,train_name,boarding_station,destination_station,arr_time,dept_time,route,status)
-values(32637,'pandian express','madurai','chennai',TO_TIMESTAMP_TZ('2020-01-0102:00:00-08:00','YYYY-MM-DDHH:MI:SSTZH:TZM'),
-TO_TIMESTAMP_TZ('2020-01-0212:00:00-08:00','YYYY-MM-DDHH:MI:SSTZH:TZM'),'madurai-trichy-chennai','available running');
 
-insert into viewtrain(train_num,train_name,boarding_station,destination_station,arr_time,dept_time,route,status)
-values(32638,'intercity express','trichy','tirunelveli',TO_TIMESTAMP_TZ('2020-01-0102:00:00-08:00','YYYY-MM-DDHH:MI:SSTZH:TZM'),
-TO_TIMESTAMP_TZ('2020-01-0212:00:00-08:00','YYYY-MM-DDHH:MI:SSTZH:TZM'),'trichy-madurai-tirunelveli','available running');
+insert into viewtrain(train_num,train_name,traveldate,boarding_station,destination_station,arr_time,dept_time,route,status,amount)
+values(32636,'vaigai expres',to_date('21-04-2020','dd-MM-yyyy'),'chennai','madurai',to_TIMESTAMP('2020-01-0508:00:00','YYYY-MM-DDHH:MI:SS'),
+TO_TIMESTAMP('2020-01-0602:00:00','YYYY-MM-DDHH:MI:SS'),'chennai-trichy-madurai','available running',100);
+
+insert into viewtrain(train_num,train_name,traveldate,boarding_station,destination_station,arr_time,dept_time,route,status,amount)
+values(32637,'pandian express',to_date('22-04-2020','dd-MM-yyyy'),'madurai','chennai',TO_TIMESTAMP('2020-01-0102:00:00','YYYY-MM-DDHH:MI:SS'),
+TO_TIMESTAMP('2020-01-0212:00:00','YYYY-MM-DDHH:MI:SS'),'madurai-trichy-chennai','available running',150);
+
+insert into viewtrain(train_num,train_name,boarding_station,destination_station,arr_time,dept_time,route,status,amount)
+values(32638,'intercity express','trichy','tirunelveli',TO_TIMESTAMP('2020-01-0109:00:00','YYYY-MM-DDHH:MI:SS'),
+TO_TIMESTAMP('2020-01-0212:00:00','YYYY-MM-DDHH:MI:SS'),'trichy-madurai-tirunelveli','available running',200);
 
 ```
 
@@ -54,111 +57,127 @@ update viewtrain set train_name = 'pothigai express' where train_num = 32636);
 ```
 ### feature 2: Registration
 
-## table 1:
+## table 2:
 
-| user_id | user_name | password | email_id          | phone_num  | gender | dob        | country_name |
-|---------|-----------|----------|-------------------|------------|--------|------------|--------------|
-| 1       | farooq    | p1234    | farooq@gmail.com  | 8778621280 | M      | 05.01.1999 | India        |
-| 2       | mohamed   | p4321    | mohamed@gmail.com | 8765432134 | M      | 08.02.99   | India        |
+| user_id | user_name | password | email_id          | phone_num  | gender | dob        | city_name    |Blocklist  |
+|---------|-----------|----------|-------------------|------------|--------|------------|--------------|-----------|
+| 1031    | farooq    | p1234    | farooq@gmail.com  | 8778621280 | M      | 05.01.1999 | madurai      |0          |
+| 1032    | mohamed   | p4321    | mohamed@gmail.com | 8765432134 | M      | 08.02.1999 | chennai      |1          |
 
 
 query:
 ```sql
 create table registration 
 ( 
-user_id number not null, 
+user_id number,
 user_name varchar2(20) not null, 
 pass varchar2(20) not null, 
-email_id varchar2(20) not null, 
+email_id varchar2(200) not null, 
 phone_num char(10) not null, 
-gender varchar2(2) not null, 
-dob varchar2(10), 
-country_name varchar2(25) not null, 
+gender char(1) not null, 
+dob date not null, 
+city_name varchar2(25) not null, 
+blocklist number(1) default '0',
 constraint user_id_pk primary key (user_id), 
-constraint same_uq unique(user_name,user_id,phone_num), 
+constraint same_uq unique(email_id), 
 constraint gender_ck check (gender in ('M','F')),
-constraint phone_num_ck check (phone_num not like '%[^0-9]%') 
+constraint phone_num_ck check (phone_num not like '%[^0-9]%'),
+constraint blocklist_ck check( blocklist in (1,0))
 );
 
 
-insert into registration (user_id,user_name,pass,email_id,phone_num,gender,dob,country_name)
-values(1,'farooq','p1234','farooq@gmail.com',8778621280,'M',to_date('05.01.1999','dd.MM.yyyy'),'India');
-insert into registration (user_id,user_name,pass,email_id,phone_num,gender,dob,country_name)
-values(2,'mohamed','p1234','mohamed@gmail.com',8778621281,'M',to_date('05.01.1999','dd.MM.yyyy'),'India');
-insert into registration (user_id,user_name,pass,email_id,phone_num,gender,dob,country_name)
-values(3,'ameer','p4321','ameer@gmail.com',8778621282,'M',to_date('05.01.1989','dd.MM.yyyy'),'China');
-select * from registration;
+insert into registration (user_id,user_name,pass,email_id,phone_num,gender,dob,city_name)
+values(USER_ID_SEQ.nextval,'farooq','p1234','farooq@gmail.com',8778621280,'M',to_date('05.01.2019','dd.MM.yyyy'),'madurai');
+insert into registration (user_id,user_name,pass,email_id,phone_num,gender,dob,city_name)
+values(USER_ID_SEQ.nextval,'mohamed','p1234','mohamed@gmail.com',8778621281,'M',to_date('05.01.2020','dd.MM.yyyy'),'madurai');
+insert into registration (user_id,user_name,pass,email_id,phone_num,gender,dob,city_name)
+values(USER_ID_SEQ.nextval,'ameer','p4321','ameer@gmail.com',8778621282,'M',to_date('05.01.2019','dd.MM.yyyy'),'chennai');
 ```
 
 
 ### feature 3: Book tickets
-## table 1:
+## table 3:
 
 
 
-| train_num | train_name      | boarding_station | destination_station | no_of_seats   | amount        | curr_status                  |
-|-----------|-----------------|------------------|---------------------|---------------|-------------- |------------------------------|
-| 32636     | vaigai express  | chennai          | madurai             | 2             |      100      | confirmed                    |
-| 32637     | pandian express | madurai          | chennai             | 5             |      100      | waiting_list                 |
-
+|  Pnr_num  | train_num | Travel_Date | boarding_station | destination_station | no_of_seats | Current Status | travel_date |           Booked date          | Amount |
+|:---------:|:---------:|:-----------:|:----------------:|:-------------------:|:-----------:|:--------------:|:-----------:|:------------------------------:|:------:|
+| 123456789 |   32636   |  21-04-2020 |      chennai     |       madurai       |      4      |    no Status   |  22.01.2020 | 09-02-20 11:32:24.599000000 AM |   400  |
+| 123456790 |   32637   |  21-04-2020 |      madurai     |       chennai       |      5      |    Confirmed   |  25.01.2020 | 09-02-20 11:37:23.790000000 AM |   750  |
 QUERY: 
 
 ``` sql
 
 create table booking
 (
-pnr_num number not null,
-train_num number,
-train_name varchar2(20),
+pnr_num number ,
+train_num number ,
 user_id number not null,
 boarding_station varchar2(20) not null,
 destination_station varchar2(20) not null,
 no_of_seats number not null,
-curr_status varchar2(20) not null,
-amount number not null,
+curr_status varchar2(20) default 'no status',
+travel_date date not null,
+booked_date timestamp,
+amount number default '0',
 constraint user_id_fk foreign key (user_id) references registration(user_id),
-constraint pnr_num_pk primary key (pnr_num),
-constraint no_of_seats_ck check (no_of_seats <=5),
+constraint train_number_fk foreign key (train_num)REFERENCES viewtrain(train_num),
 constraint station1_ck check (boarding_station <> destination_station),
-constraint no_of_seats_ck check (no_of_seats >=0),
-constraint curr_status_ck check (curr_status in('booked','waiting_list')),
+constraint seats_fk foreign key (no_of_seats) references noOfSeats(no_of_seats),
+constraint same_id_date_uq unique(user_id,travel_date)
 );
 ```
 ## sequence:
 ```sql
 create sequence pnr_num_seq start with 123456789 increment by 2;
+
+create sequence user_id_seq start with 1000 increment by 1;
+
+create index train_num_index ON viewtrain (train_num);
+
 ```
-
-## check status of the train 
-```sql
-select curr_status from booking where pnr_number = ?;
-```
-## table 2: total number of seats.
+## table 4: total number of seats.
 
 
-| train_num | avail_seats |
-|-----------|-------------|
-| 32636     | 100         |
-| 32637     | 100         |
+| Travel Date | train_num | Available Seats |
+|:-----------:|:---------:|:---------------:|
+|  21-04-2020 |   32636   |       100       |
+|  21-04-2020 |   32637   |       100       |
 
 query:
 ```sql
 
 create table seats
 (
+travel_date date,
 train_num number not null,
-avail_seats number not null,
-constraint train_num_uq unique (train_num),
-constraint train_num_pf foreign key (train_num) references viewtrain(train_num)
+avail_seats number ,
+constraint same_tr_number_date unique(train_num,travel_date),
+constraint train_num_fk foreign key (train_num)REFERENCES viewtrain(train_num)
 );
 
-insert into seats(train_num,avail_seats)values(32636,100);
-insert into seats(train_num,avail_seats)values(32637,100);
-insert into seats(train_num,avail_seats)values(32638,100);
+insert into seats(travel_date,train_num,avail_seats)values(to_date('21-04-2020','dd-MM-yyyy'),32636,100);
+insert into seats(travel_date,train_num,avail_seats)values(to_date('22-04-2020','dd-MM-yyyy'),32636,100);
 
-select * from seats;
+insert into seats(travel_date,train_num,avail_seats)values(to_date('21-04-2020','dd-MM-yyyy'),32638,100);
 
 ```
+## Table 5: Seats Count Constraint
+
+| no_of_seats |
+|:-----------:|
+|      1      |
+|      2      |
+
+```sql
+Create table noOfSeats(
+no_of_seats number not null,
+constraint seats_pk primary key (no_of_seats)
+);
+insert into noOfSeats values(1);
+```
+
+
 
 ### function: count number of seats.
 
