@@ -5,10 +5,10 @@ To know the availability status of the train and book tickets accordingly.
 
 ## features:
 ## table 1:
-| train_num | train_name      | boarding_station | destination_station | arr_time                     | dept_time                    | route                  | status            |
-|-----------|-----------------|------------------|---------------------|------------------------------|------------------------------|------------------------|-------------------|
-| 32636     | vaigai express  | chennai          | madurai             | 01-JAN-20 02.00.00.000000 AM | 02-JAN-20 12.00.00.000000 PM | chennai-trichy-madurai | available running |
-| 32637     | pandian express | madurai          | chennai             | 01-JAN-20 02.00.00.000000 AM | 02-JAN-20 12.00.00.000000 PM | madurai-trichy-chennai | available running |
+| train_num | train_name       | Travel_Date | boarding_station | destination_station | Arrival Time                   | Departure Time                 | Route                  | Status            | Amount |
+|-----------|------------------|-------------|------------------|---------------------|--------------------------------|--------------------------------|------------------------|-------------------|--------|
+| 32636     | vaigai express   | 21-04-2020  | chennai          | madurai             | 05-01-20 08:00:00.000000000 AM | 06-01-20 02:00:00.000000000 AM | chennai-trichy-madurai | available running | 100    |
+| 32637     | pandiyan express | 21-04-2020  | madurai          | chennai             | 01-01-20 02:00:00.000000000 AM | 02-01-20 12:00:00.000000000 PM | madurai-trichy-chennai | cancelled         | 150    |
 
 ### feature 1: list all trains
 
