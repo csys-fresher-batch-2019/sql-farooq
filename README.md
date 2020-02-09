@@ -127,6 +127,32 @@ constraint seats_fk foreign key (no_of_seats) references noOfSeats(no_of_seats),
 constraint same_id_date_uq unique(user_id,travel_date)
 );
 ```
+
+## Table 4: Booking Queue
+|  Pnr_num  | train_num | Travel_Date | boarding_station | destination_station | no_of_seats | Current Status | travel_date |           Booked date          | Amount |
+|:---------:|:---------:|:-----------:|:----------------:|:-------------------:|:-----------:|:--------------:|:-----------:|:------------------------------:|:------:|
+| 123456789 |   32636   |  21-04-2020 |      chennai     |       madurai       |      4      |    no Status   |  22.01.2020 | 09-02-20 11:32:24.599000000 AM |   400  |
+| 123456790 |   32637   |  21-04-2020 |      madurai     |       chennai       |      5      |    Waiting List|  25.01.2020 | 09-02-20 11:37:23.790000000 AM |   750  |
+
+```sql
+create table bookingQueue
+(
+pnr_num number ,
+train_num number ,
+user_id number not null,
+boarding_station varchar2(20) not null,
+destination_station varchar2(20) not null,
+no_of_seats number not null,
+curr_status varchar2(20) default 'no status',
+travel_date date not null,
+booked_date timestamp,
+amount number default '0'
+);
+
+
+```
+
+
 ## sequence:
 ```sql
 create sequence pnr_num_seq start with 123456789 increment by 2;
@@ -136,7 +162,7 @@ create sequence user_id_seq start with 1000 increment by 1;
 create index train_num_index ON viewtrain (train_num);
 
 ```
-## table 4: total number of seats.
+## table 5: total number of seats.
 
 
 | Travel Date | train_num | Available Seats |
@@ -162,7 +188,8 @@ insert into seats(travel_date,train_num,avail_seats)values(to_date('22-04-2020',
 insert into seats(travel_date,train_num,avail_seats)values(to_date('21-04-2020','dd-MM-yyyy'),32638,100);
 
 ```
-## Table 5: Seats Count Constraint
+## Table 6: Seats Count Constraint
+
 
 | no_of_seats |
 |:-----------:|
@@ -177,72 +204,78 @@ constraint seats_pk primary key (no_of_seats)
 insert into noOfSeats values(1);
 ```
 
-
-
 ### function: count number of seats.
 
 ```sql
 
-create or replace function findavail(i_train_num IN number,i_pnr_num IN number) 
+create or replace function findavail(i_train_num IN number,i_travel_date in date) 
  return number AS 
  v_remaining_seats number;
  v_booked_seats number;
  v_seats number;
- 
 begin
- 
-select avail_seats into v_seats from seats where train_num = i_train_num;
-
-select sum(no_of_seats) into v_booked_seats from booking where train_num = i_train_num and pnr_num = i_pnr_num;
-
-v_remaining_seats := v_seats - v_booked_seats;
-
-return v_remaining_seats;
-
+select avail_seats into v_seats from seats where train_num = i_train_num and travel_date=i_travel_date;
+return v_seats;
 end findavail;
 
 ```
 
 ### procedure : check either confirmed or waitinglist
-## table:
-| pnr_num   | train_num | train_name     | boarding_station | destination_station | no_of_seats | current_status | travel_date |
-|-----------|-----------|----------------|------------------|---------------------|-------------|----------------|-------------|
-| 123456789 | 32636     | vaigai express | chennai          | madurai             | 5           | confirmed      | 22.01.2020  |
-| 123456791 | 32636     | vaigai express | madurai          | chennai             | 5           | confirmed      | 25.01.2020  |```sql
 
 ```sql
 create or replace PROCEDURE PR_booking_status
 (
 i_train_num  in number ,
-i_pnr_num IN number,
 i_user_id IN number,
-i_train_name IN varchar2,
 i_boarding_station IN varchar2,
 i_destination_station IN varchar2,
 i_no_of_seats IN number,
-i_travel_date date,
-amount IN number
+i_travel_date in date
 ) AS 
 V_booking_Seats number;
+confirmation number;
+v_ck number;
+ck number;
+v_blocked_list number;
+v_total number;
+v_seats number;
 BEGIN
-V_booking_seats := findavail ( I_train_num);
+V_booking_Seats :=0;
+confirmation :=0;
+v_ck :=0;
+
+    V_booking_seats := findavail (I_train_num,i_travel_date);
+    
+   v_total := total();
+   v_seats:= totalseats();
+   update seats set avail_seats = v_booking_seats-i_no_of_seats where train_num= i_train_num and travel_date=i_travel_date;
    
-   update seats set avail_seats = v_booking_seats-i_no_of_seats where train_num= i_train_num;
+   select avail_seats into confirmation from seats where train_num= i_train_num and travel_date=i_travel_date;
+    v_ck :=i_no_of_seats+confirmation;
+    ck := (i_no_of_seats-confirmation)-i_no_of_seats;
+ 
+   IF confirmation <= 0  THEN
    
-   select avail_seats into confirmation from seats where train_num= i_train_num;
+   insert into bookingQueue (user_id,pnr_num,train_num,boarding_station,destination_station,no_of_seats,curr_status,travel_date,booked_date)
+   values(i_user_id,null,i_train_num,i_boarding_station,i_destination_station,ck,'waiting list',i_travel_date,systimestamp);
+
    
-   
-   IF confirmation <= 0 THEN
-   
-   insert into booking (pnr_num,train_num,train_name,boarding_station,destination_station,no_of_seats,curr_status,travel_date,user_id)
-   values(pnr_num_seq.nextval,i_train_num,i_train_name,i_boarding_station,i_destination_station,i_no_of_seats,'waiting list',i_travel_date,i_user_id);
-   
+   insert into booking (user_id,pnr_num,train_num,boarding_station,destination_station,no_of_seats,curr_status,travel_date,booked_date)
+   values(i_user_id,pnr_num_seq.nextval,i_train_num,i_boarding_station,i_destination_station,v_ck,'confirmed',i_travel_date,systimestamp);
+      
+      
    ELSE
    
-   insert into booking (pnr_num,train_num,train_name,boarding_station,destination_station,no_of_seats,curr_status,travel_date,user_id)
-   values(pnr_num_seq.nextval,i_train_num,i_train_name,i_boarding_station,i_destination_station,i_no_of_seats,'confirmed',i_travel_date,i_user_id);
+   insert into booking (user_id,pnr_num,train_num,boarding_station,destination_station,no_of_seats,curr_status,travel_date,booked_date)
+   values(i_user_id,pnr_num_seq.nextval,i_train_num,i_boarding_station,i_destination_station,i_no_of_seats,'confirmed',i_travel_date,systimestamp);
 
-END IF;
+  END IF;
+  commit;
+  
+  EXCEPTION WHEN OTHERS then
+  DBMS_OUTPUT.PUT_LINE(Exception);
+  ROLLBACK;
+  
   COMMIT;
 END PR_booking_status;
 
@@ -251,17 +284,14 @@ END PR_booking_status;
 
 DECLARE
 v_train_num number := 32636;
-v_user_id number:= 1;
-v_pnr_num number;
-v_train_name varchar2(20) := 'vaigai express';
 v_boarding_station varchar2(20) := 'chennai';
 v_destination_station varchar2(20) :='madurai';
-v_no_of_seats number := 55;
+v_user_id number := 1031;
+v_no_of_seats number := 9;
 v_curr_status varchar2(20);
-v_travel_date date := to_date('12.12.12','dd.MM.yyyy');
-v_amount number;
+v_travel_date date := to_date('21-04-2020','dd-MM-yyyy');
 BEGIN
-PR_booking_status(v_train_num,v_pnr_num,v_user_id,v_train_name,v_boarding_station,v_destination_station,v_no_of_seats,v_travel_date,amount);
+PR_booking_status(v_train_num,v_user_id,v_boarding_station,v_destination_station,v_no_of_seats,v_travel_date);
 END;
 
 ```
